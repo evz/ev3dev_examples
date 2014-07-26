@@ -138,8 +138,13 @@ class Infrared_sensor(Sensor):
 class Motor(Communicate):
 
     def __init__(self, port = None):
-        if port:
-            self.path = '/sys/class/tacho-motor/out' + port + ':motor:tacho/'
+        path_base = '/sys/class/tacho-motor/tacho-motor'
+        for p in range(4):
+            path = '%s%s/port_name' % (path_base, p)
+            with open(path) as f:
+                port_name = f.read()
+                if port_name.endswith(port):
+                    self.path = path
 
     def set_run_mode(self, value):
         path = self.path + 'run_mode'
