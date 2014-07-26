@@ -140,10 +140,11 @@ class Motor(Communicate):
     def __init__(self, port = None):
         path_base = '/sys/class/tacho-motor/tacho-motor'
         for p in range(4):
-            path = '%s%s/port_name' % (path_base, p)
+            path = '%s%s/' % (path_base, p)
+            port_path = '%sport_name' % (path)
             try:
-                with open(path) as f:
-                    port_name = f.read()
+                with open(port_path) as f:
+                    port_name = f.read().strip()
                     if port_name.endswith(port):
                         self.path = path
             except IOError:
@@ -155,16 +156,10 @@ class Motor(Communicate):
         while self.get_run_mode() != value:
             time.sleep(0.05)
 
-    def set_brake_mode(self, value):
-        path = self.path + 'brake_mode'
-        self.set_on_off(path, value)
-        while self.get_brake_mode() != Communicate.onoff[value]:
-            time.sleep(0.05)
-
-    def set_hold_mode(self, value):
-        path = self.path + 'hold_mode'
-        self.set_on_off(path, value)
-        while self.get_hold_mode() != Communicate.onoff[value]:
+    def set_stop_mode(self, value):
+        path = self.path + 'stop_mode'
+        self.write(path, value)
+        while self.get_stop_mode() != value:
             time.sleep(0.05)
 
     def set_regulation_mode(self, value):
@@ -182,11 +177,8 @@ class Motor(Communicate):
     def get_run_mode(self):
         return self.read(self.path + 'run_mode').strip()
 
-    def get_brake_mode(self):
-        return self.read(self.path + 'brake_mode').strip()
-
-    def get_hold_mode(self):
-        return self.read(self.path + 'hold_mode').strip()
+    def get_stop_mode(self):
+        return self.read(self.path + 'stop_mode').strip()
 
     def get_regulation_mode(self):
         return self.read(self.path + 'regulation_mode').strip()
@@ -230,42 +222,38 @@ class Motor(Communicate):
             down = 10000
         self.write(path, str(down))
 
-    def rotate_forever(self, speed, regulate = 0, brake = 1, hold = 0):
+    def rotate_forever(self, speed, regulate = 0, stop = 'brake', hold = 0):
         self.set_run_mode('forever')
-        self.set_brake_mode(brake)
-        self.set_hold_mode(hold)
+        self.set_stop_mode(stop)
         self.set_speed(speed)
         self.set_regulation_mode(regulate)
         self.run()
 
-    def rotate_time(self, time, speed, up = 0, down = 0, regulate = 0, brake = 1, hold = 0):
+    def rotate_time(self, time, speed, up = 0, down = 0, regulate = 0, stop = 'brake'):
         self.set_run_mode('time')
-        self.set_brake_mode(brake)
-        self.set_hold_mode(hold)
+        self.set_stop_mode(stop)
         self.set_regulation_mode(regulate)
         self.set_ramps(up, down)
         self.set_time(time)
         self.set_speed(speed)
         self.run()
 
-    def rotate_position(self, position, speed, up = 0, down = 0, regulate = 0, brake = 1, hold = 0, reset = 1):
+    def rotate_position(self, position, speed, up = 0, down = 0, regulate = 0, stop = 1, reset = 1):
         self.set_run_mode('position')
         if reset:
             self.reset_position()
         self.set_position_mode('relative')
-        self.set_brake_mode(brake)
-        self.set_hold_mode(hold)
+        self.set_stop_mode(stop)
         self.set_regulation_mode(regulate)
         self.set_ramps(up, down)
         self.set_speed(speed)
         self.set_position(position)
         self.run()
 
-    def goto_position(self, position, speed, up = 0, down = 0, regulate = 0, brake = 1, hold = 0):
+    def goto_position(self, position, speed, up = 0, down = 0, regulate = 0, stop = 'brake'):
         self.set_run_mode('position')
         self.set_position_mode('absolute')
-        self.set_brake_mode(brake)
-        self.set_hold_mode(hold)
+        self.set_stop_mode(stop)
         self.set_regulation_mode(regulate)
         self.set_ramps(up, down)
         self.set_speed(speed)

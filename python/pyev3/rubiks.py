@@ -17,12 +17,12 @@ class Rubiks(Robot):
         self.state = ['U', 'D', 'F', 'L', 'B', 'R']
 
     def init_motors(self):
-        self.mot_bras.rotate_forever(40, regulate=1, brake=1, hold=0)
-        self.mot_push.rotate_forever(-30, regulate=1, brake=1, hold=0)
+        self.mot_bras.rotate_forever(40, regulate=1, stop='brake')
+        self.mot_push.rotate_forever(-30, regulate=1, stop='brake')
         self.mot_push.wait_for_stop()
         self.mot_push.stop()
         self.mot_bras.wait_for_stop()
-        self.mot_bras.rotate_position(-380, 100, regulate=0, brake=1, hold=1)
+        self.mot_bras.rotate_position(-380, 100, regulate=0, stop='brake')
         self.mot_bras.wait_for_stop()
         self.mot_bras.stop()
         self.mot_bras.reset_position()
@@ -38,11 +38,11 @@ class Rubiks(Robot):
     
     def rotate_cube(self, direction, nb, wait = 1):
         if (self.mot_push.get_position() > 15):
-            self.mot_push.goto_position(5, 35, regulate=1, brake=1, hold=0)
+            self.mot_push.goto_position(5, 35, regulate=1, stop='brake')
             self.mot_push.wait_for_stop()
         
         pre_rotation = 135 * round(self.mot_rotate.get_position() / 135.0)
-        self.mot_rotate.goto_position(pre_rotation + 270 * direction * nb, Rubiks.rotate_speed, 0, 300, 1, 1, hold=1)
+        self.mot_rotate.goto_position(pre_rotation + 270 * direction * nb, Rubiks.rotate_speed, 0, 300, 1, 'brake')
         time.sleep(nb * 60 * 0.7 / Rubiks.rotate_speed)
         self.mot_rotate.stop()
         if nb >= 1:
@@ -63,12 +63,12 @@ class Rubiks(Robot):
         self.rotate_cube(-1,1)
 
     def rotate_cube_blocked(self, direction, nb):
-        self.mot_push.goto_position(120, 30, 0, 300, regulate=1, brake=1, hold=1)
+        self.mot_push.goto_position(120, 30, 0, 300, regulate=1, stop='brake')
         self.mot_push.wait_for_stop()
         pre_rotation = 135 * round(self.mot_rotate.get_position() / 135.0)
-        self.mot_rotate.goto_position(pre_rotation + 270 * direction * nb + 65 * direction, Rubiks.rotate_speed, 0, 300, 1, 1, hold=1)
+        self.mot_rotate.goto_position(pre_rotation + 270 * direction * nb + 65 * direction, Rubiks.rotate_speed, 0, 300, 1, 'brake')
         time.sleep(nb * 60 * 0.7 / Rubiks.rotate_speed)
-        self.mot_rotate.goto_position(pre_rotation + 270 * direction * nb, Rubiks.rotate_speed, 0, 0, 1, 1, hold=1)
+        self.mot_rotate.goto_position(pre_rotation + 270 * direction * nb, Rubiks.rotate_speed, 0, 0, 1, 'brake')
         time.sleep(0.3)
         self.mot_rotate.stop()
 
@@ -83,24 +83,24 @@ class Rubiks(Robot):
         
     def flip(self):
         if (math.fabs(self.mot_push.get_position() - 95) > 5):
-            self.mot_push.goto_position(95, 30, 0, 300, regulate=1, brake=1, hold=0)
+            self.mot_push.goto_position(95, 30, 0, 300, regulate=1, stop='brake')
             time.sleep(0.4)
-        self.mot_push.goto_position(180, 50, regulate=1, brake=1, hold=0)
+        self.mot_push.goto_position(180, 50, regulate=1, stop='brake')
         self.mot_push.wait_for_stop()
-        self.mot_push.goto_position(95, 50, 0, 300, regulate=1, brake=1, hold=0)
+        self.mot_push.goto_position(95, 50, 0, 300, regulate=1, stop='brake')
         time.sleep(0.4)
         transformation = [2, 4, 1, 3, 0, 5]
         self.apply_transformation(transformation)
 
     # Function to put the cube in a good position, by blocking it with the pusher.
     def bloc_cube(self):
-        self.mot_push.goto_position(95, 30, 0, 300, regulate=1, brake=1, hold=0)
+        self.mot_push.goto_position(95, 30, 0, 300, regulate=1, stop='brake', hold=0)
         self.mot_push.wait_for_stop()
-        self.mot_push.goto_position(5, 35, regulate=1, brake=1, hold=0)
+        self.mot_push.goto_position(5, 35, regulate=1, stop='brake', hold=0)
         self.mot_push.wait_for_stop()
 
     def put_arm_middle(self):
-        self.mot_bras.goto_position(-370, 100, regulate=0, brake=1, hold=1)
+        self.mot_bras.goto_position(-370, 100, regulate=0, stop='brake', hold=1)
 
     def put_arm_corner(self, i):
         diff = 0
@@ -108,16 +108,16 @@ class Rubiks(Robot):
             diff = 20
         if i == 6:
             diff = -20
-        self.mot_bras.goto_position(-200 - diff, 100, regulate=1, brake=1, hold=1)
+        self.mot_bras.goto_position(-200 - diff, 100, regulate=1, stop='brake', hold=1)
 
     def put_arm_edge(self, i):
         diff = 0
         if i >= 2 and i <= 4:
             diff = 20
-        self.mot_bras.goto_position(-260 - diff, 100, regulate=1, brake=1, hold=1)
+        self.mot_bras.goto_position(-260 - diff, 100, regulate=1, stop='brake', hold=1)
 
     def remove_arm(self):
-        self.mot_bras.goto_position(0, 100, regulate=1, brake=1, hold=0)
+        self.mot_bras.goto_position(0, 100, regulate=1, stop='brake', hold=0)
 
     def get_color_distance (self, c1, c2):
         (_,(h1,s1,l1)) = c1
@@ -160,7 +160,7 @@ class Rubiks(Robot):
         
     def scan_face(self):
         if (self.mot_push.get_position() > 15):
-            self.mot_push.goto_position(5, 35, regulate=1, brake=1, hold=0)
+            self.mot_push.goto_position(5, 35, regulate=1, stop='brake', hold=0)
             self.mot_push.wait_for_stop()
         self.put_arm_middle()
         self.mot_bras.wait_for_stop()
@@ -169,7 +169,7 @@ class Rubiks(Robot):
         i = 0
         self.put_arm_corner(i)
         i+=1
-        self.mot_rotate.rotate_position(1080, 40, 0, 0, 1, 1, hold=1)
+        self.mot_rotate.rotate_position(1080, 40, 0, 0, 1, 'brake')
         time.sleep(0.1)
         while math.fabs(self.mot_rotate.get_speed()) > 4:
             if self.mot_rotate.get_position() >= (i * 135) - 5:
@@ -256,7 +256,7 @@ class Rubiks(Robot):
         self.cube_done()
     
     def cube_done(self):
-        self.mot_push.goto_position(5, 30, 0, 300, regulate=1, brake=1, hold=1)
+        self.mot_push.goto_position(5, 30, 0, 300, regulate=1, stop='brake', hold=1)
         self.mot_push.wait_for_stop()
         os.system("beep -f 262 -l 180 -d 20 -r 2 \
             -n -f 392 -l 180 -d 20 -r 2 \
