@@ -83,6 +83,26 @@ class Color_sensor(Sensor):
         self.set_mode('COL-COLOR')
         return self.get_value()
 
+class UltraSonic_sensor(Sensor):
+    
+    def __init__(self):
+        Sensor.__init__(self, type_id=30)
+
+    def get_dist_cm(self):
+        self.set_mode('US-DIST-CM')
+        return self.get_values(0)
+
+    def get_dist_in(self):
+        self.set_mode('US-DIST-IN')
+        return self.get_values(0)
+
+    def get_single_cm(self):
+        self.set_mode('US-SI-CM')
+        return self.get_values(0)
+
+    def get_single_in(self):
+        self.set_mode('US-SI-IN')
+        return self.get_values(0)
 
 class Infrared_sensor(Sensor):
 
