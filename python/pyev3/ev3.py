@@ -139,16 +139,11 @@ class Motor(Communicate):
 
     def __init__(self, port = None):
         path_base = '/sys/class/tacho-motor/tacho-motor'
-        for p in range(4):
-            path = '%s%s/' % (path_base, p)
-            port_path = '%sport_name' % (path)
-            try:
-                with open(port_path) as f:
-                    port_name = f.read().strip()
-                    if port_name.endswith(port):
-                        self.path = path
-            except IOError:
-                pass
+        paths = glob.glob('/sys/bus/legoev3/devices/out%s:motor/tacho-motor/tacho-motor*/' % port)
+        if paths and os.path.exists(paths[0]):
+            self.path = paths[0]
+        else:
+            self.path = None
 
     def set_run_mode(self, value):
         path = self.path + 'run_mode'
@@ -187,7 +182,7 @@ class Motor(Communicate):
         return self.read(self.path + 'position_mode').strip()
 
     def set_speed(self, value):
-        path = self.path + 'speed_setpoint'
+        path = self.path + 'duty_cycle_sp'
         self.write(path, str(value))
 
     def set_time(self, value):
@@ -206,7 +201,7 @@ class Motor(Communicate):
         return int(self.read(self.path + 'position'))
 
     def get_speed(self):
-        return int(self.read(self.path + 'speed'))
+        return int(self.read(self.path + 'duty_cycle_sp'))
 
     def get_power(self):
         return int(self.read(self.path + 'power'))
@@ -262,7 +257,7 @@ class Motor(Communicate):
 
     def wait_for_stop(self):
         time.sleep(0.1)
-        while math.fabs(self.get_speed()) > 3:
+        while math.fabs(self.get_speed()) > 30:
             time.sleep(0.05)
 
     def run(self, value = 1):
@@ -271,7 +266,6 @@ class Motor(Communicate):
 
     def stop(self, hold = 0):
         self.run(0)
-        self.set_hold_mode(hold)
 
 
 class LCD(Communicate):
