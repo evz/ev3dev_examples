@@ -190,7 +190,7 @@ class Motor(Communicate):
         self.write(path, str(value))
 
     def set_position(self, value):
-        path = self.path + 'position_setpoint'
+        path = self.path + 'position_sp'
         self.write(path, str(value))
 
     def reset_position(self, value = 0):
