@@ -205,7 +205,12 @@ class Motor(Communicate):
         return int(self.read(self.path + 'position'))
 
     def get_speed(self):
-        return int(self.read(self.path + 'duty_cycle_sp'))
+        regulate = self.get_regulation_mode()
+        if regulate == 0:
+            path = self.path + 'duty_cycle_sp'
+        else:
+            path = self.path + 'pulses_per_second_sp'
+        return int(self.read(path))
 
     def get_power(self):
         return int(self.read(self.path + 'power'))
