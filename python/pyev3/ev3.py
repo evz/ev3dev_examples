@@ -224,8 +224,8 @@ class Motor(Communicate):
     def rotate_forever(self, speed, regulate = 0, stop = 'brake', hold = 0):
         self.set_run_mode('forever')
         self.set_stop_mode(stop)
-        self.set_speed(speed)
         self.set_regulation_mode(regulate)
+        self.set_speed(speed)
         self.run()
 
     def rotate_time(self, time, speed, up = 0, down = 0, regulate = 0, stop = 'brake'):
