@@ -181,7 +181,8 @@ class Motor(Communicate):
     def get_position_mode(self):
         return self.read(self.path + 'position_mode').strip()
 
-    def set_speed(self, value, regulate=0):
+    def set_speed(self, value):
+        regulate = self.get_regulation_mode()
         if regulate == 0:
             path = self.path + 'duty_cycle_sp'
         else:
@@ -223,7 +224,7 @@ class Motor(Communicate):
     def rotate_forever(self, speed, regulate = 0, stop = 'brake', hold = 0):
         self.set_run_mode('forever')
         self.set_stop_mode(stop)
-        self.set_speed(speed, regulate=regulate)
+        self.set_speed(speed)
         self.set_regulation_mode(regulate)
         self.run()
 
@@ -244,7 +245,7 @@ class Motor(Communicate):
         self.set_stop_mode(stop)
         self.set_regulation_mode(regulate)
         self.set_ramps(up, down)
-        self.set_speed(speed, regulate=regulate)
+        self.set_speed(speed)
         self.set_position(position)
         self.run()
 
@@ -254,7 +255,7 @@ class Motor(Communicate):
         self.set_stop_mode(stop)
         self.set_regulation_mode(regulate)
         self.set_ramps(up, down)
-        self.set_speed(speed, regulate=regulate)
+        self.set_speed(speed)
         self.set_position(position)
         self.run()
 
