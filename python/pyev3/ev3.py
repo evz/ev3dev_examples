@@ -190,15 +190,15 @@ class Motor(Communicate):
         self.write(path, str(value))
 
     def set_time(self, value):
-        path = self.path + 'time'
+        path = self.path + 'time_sp'
         self.write(path, str(value))
 
     def set_position(self, value):
-        path = self.path + 'position'
+        path = self.path + 'position_sp'
         self.write(path, str(value))
 
     def reset_position(self, value = 0):
-        path = self.path + 'position'
+        path = self.path + 'position_sp'
         self.write(path, str(value))
 
     def get_position(self):
