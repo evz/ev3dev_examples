@@ -210,9 +210,9 @@ class Motor(Communicate):
         return self.read(self.path + 'state')
 
     def set_ramps(self, up, down):
-        path = self.path + 'ramp_up'
+        path = self.path + 'ramp_up_sp'
         self.write(path, str(up))
-        path = self.path + 'ramp_down'
+        path = self.path + 'ramp_down_sp'
         if down > 10000:
             down = 10000
         self.write(path, str(down))
