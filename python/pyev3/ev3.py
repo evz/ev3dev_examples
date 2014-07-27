@@ -233,7 +233,7 @@ class Motor(Communicate):
         self.set_speed(speed)
         self.run()
 
-    def rotate_position(self, position, speed, up = 0, down = 0, regulate = 0, stop = 1, reset = 1):
+    def rotate_position(self, position, speed, up = 0, down = 0, regulate = 0, stop = 'brake', reset = 1):
         self.set_run_mode('position')
         if reset:
             self.reset_position()
